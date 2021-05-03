@@ -1,11 +1,15 @@
 package it.polito.tdp.metroparis.model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 import it.polito.tdp.metroparis.db.MetroDAO;
 
@@ -46,8 +50,53 @@ public class Model {
 		for(Connessione c:connessioni)
 			this.grafo.addEdge(c.getStazP(), c.getStazA());
 		
-		System.out.println(this.grafo);
+		//System.out.println(this.grafo);
 		
+		/*Fermata f;
+		Set<DefaultEdge> archi =this.grafo.edgesOf(f);
+		for(DefaultEdge e:archi) {*/
+			/*
+			Fermata f1=this.grafo.getEdgeSource(e);
+			//oppure
+			Fermata f2=this.grafo.getEdgeTarget(e);
+			if(f1.equals(f)) {
+				//f2 è quello che mi serve
+			} else {
+				//f1 è quello che mi serve
+			}*/
+			
+			//f1=Graphs.getOppositeVertex(this.grafo, e, f); //Prende grafo, arco, e vertice
+		//}
+		
+		//List<Fermata> fermateAdiacenti =Graphs.successorListOf(this.grafo, f);
+		//Graphs.predecessorListOf(null, null);
+		//Nel grafo non orientato i due metodi sono equivalenti 
+		//Archi entranti o uscenti non cambia nulla
 	}
 	
+	public List<Fermata> fermateRaggiungibili(Fermata partenza){
+		//BreadthFirstIterator<Fermata, DefaultEdge> bfv=new BreadthFirstIterator<>(this.grafo,partenza);
+		
+		DepthFirstIterator<Fermata, DefaultEdge> dfv=new DepthFirstIterator<>(this.grafo, partenza);
+		
+		List<Fermata> result=new ArrayList<>();
+		
+		while(dfv.hasNext()) {
+			Fermata f=dfv.next();
+			result.add(f);
+		}
+		
+		return result;
+	}
+	
+	
+	public Fermata trovaFermata(String nome) {
+		//Se questo metodo fosse chiamato molte volte potrei pensare di ottimizzarlo usando una Map
+		for(Fermata f:this.grafo.vertexSet()) {
+			if(f.getNome().equals(nome)) {
+				return f;
+			}
+		}
+		return null;
+	}
 }
